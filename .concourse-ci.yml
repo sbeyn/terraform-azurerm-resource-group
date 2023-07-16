@@ -43,6 +43,8 @@ jobs:
 
   - name: vault
     plan:
+      - get: terraform-module-source
+        trigger: true
       - task: generate-azure-secrets
         config:
           platform: linux
@@ -74,12 +76,12 @@ jobs:
   - name: test-and-release
     plan:
       - get: terraform-module-source
-        trigger: true
       - get: keyval
+        trigger: true
       - load_var: creds
         file: keyval/version.json
       - set_pipeline: self
-        file: module/.concourse-ci.yml
+        file: terraform-module-source/.concourse-ci.yml
       - task: version
         config:
           inputs:
