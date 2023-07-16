@@ -41,11 +41,13 @@ resources:
 
 jobs:
 
-  - name: vault
+  - name: vault-secrets-azure
     plan:
       - get: terraform-module-source
         trigger: true
-      - task: generate-azure-secrets
+      - set_pipeline: self
+        file: terraform-module-source/.concourse-ci.yml
+      - task: generate
         config:
           platform: linux
           image_resource:
@@ -73,15 +75,40 @@ jobs:
             arm_client_id = file("vault-azure/creds.json").parse_json().data.client_id
             arm_client_secret = file("vault-azure/creds.json").parse_json().data.client_secret
 
-  - name: test-and-release
+  - name: tests
     plan:
       - get: terraform-module-source
       - get: keyval
         trigger: true
       - load_var: creds
         file: keyval/version.json
-      - set_pipeline: self
-        file: terraform-module-source/.concourse-ci.yml
+      - task: terratest
+        config:
+          inputs:
+            - name: terraform-module-source
+            - name: keyval
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          params:
+            ARM_TENANT_ID: ((.:creds.arm_tenant_id))
+            ARM_SUBSCRIPTION_ID: ((.:creds.arm_subscription_id))
+            ARM_CLIENT_ID: ((.:creds.arm_client_id))
+            ARM_CLIENT_SECRET: ((.:creds.arm_client_secret))
+          run:
+            path: sh
+            args:
+            - -cx
+            - |
+              env
+
+  - name: publish-and-release
+    plan:
+      - get: terraform-module-source
+        trigger: true
+        passed: [tests]
       - task: version
         config:
           inputs:
@@ -103,28 +130,7 @@ jobs:
               release next-version --bump-patch > VERSION
               release changelog
               echo "module-$(date +%s)" > .release-name
-      - task: test
-        config:
-          inputs:
-            - name: terraform-module-source
-            - name: keyval
-          platform: linux
-          image_resource:
-            type: registry-image
-            source:
-              repository: alpine
-          params:
-            ARM_TENANT_ID: ((.:creds.arm_tenant_id))
-            ARM_SUBSCRIPTION_ID: ((.:creds.arm_subscription_id))
-            ARM_CLIENT_ID: ((.:creds.arm_client_id))
-            ARM_CLIENT_SECRET: ((.:creds.arm_client_secret))
-          run:
-            path: sh
-            args:
-            - -cx
-            - |
-              env
-      - task: publish-release
+      - task: archive
         config:
           inputs:
             - name: terraform-module-source
