@@ -93,13 +93,13 @@ jobs:
               repository: registry.gitlab.com/juhani/go-semrel-gitlab
               tag: v0.21.1
           outputs:
-            - name: module
+            - name: terraform-module-source
           run:
             path: sh
             args:
             - -cx
             - |
-              cd ./module
+              cd ./terraform-module-source
               release next-version --bump-patch > VERSION
               release changelog
               echo "module-$(date +%s)" > .release-name
