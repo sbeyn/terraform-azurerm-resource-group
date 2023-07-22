@@ -67,6 +67,8 @@ jobs:
                 export VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id="((auth-pipeline.role_id))" secret_id="((auth-pipeline.secret_id))")
                 vault read -format=json factory/azure/creds/ops > vault-azure/creds.json
                 vault read -format=json factory/azure/config > vault-azure/config.json
+                cat vault-azure/creds.json
+                cat vault-azure/config.json
       - put: keyval
         params:
           mapping: |
