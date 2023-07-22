@@ -75,7 +75,7 @@ jobs:
             arm_client_id = file("vault-azure/creds.json").parse_json().data.client_id
             arm_client_secret = file("vault-azure/creds.json").parse_json().data.client_secret
 
-  - name: terratest
+  - name: test-infrastructure-code
     plan:
       - get: terraform-module-source
       - get: keyval
@@ -111,7 +111,7 @@ jobs:
     plan:
       - get: terraform-module-source
         trigger: true
-        passed: [tests]
+        passed: [test-infrastructure-code]
       - task: version
         config:
           inputs:
