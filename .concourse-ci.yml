@@ -93,6 +93,11 @@ jobs:
             source:
               repository: registry.swipsolution.fr:5000/docker-terratest
               tag: latest
+              username: ((nexus.username))
+              password: ((nexus.password))
+              ca_certs:
+              - |
+                ((ca.chain))
           params:
             ARM_TENANT_ID: ((.:creds.arm_tenant_id))
             ARM_SUBSCRIPTION_ID: ((.:creds.arm_subscription_id))
@@ -122,11 +127,6 @@ jobs:
             source:
               repository: registry.gitlab.com/juhani/go-semrel-gitlab
               tag: v0.21.1
-              username: ((nexus.username))
-              password: ((nexus.password))
-              ca_certs:
-              - |
-                ((ca.chain))
           outputs:
             - name: terraform-module-source
           run:
