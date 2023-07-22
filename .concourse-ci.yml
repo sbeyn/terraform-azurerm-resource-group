@@ -122,6 +122,11 @@ jobs:
             source:
               repository: registry.gitlab.com/juhani/go-semrel-gitlab
               tag: v0.21.1
+              username: ((nexus.username))
+              password: ((nexus.password))
+              ca_certs:
+              - |
+                ((ca.chain))
           outputs:
             - name: terraform-module-source
           run:
