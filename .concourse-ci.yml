@@ -75,7 +75,7 @@ jobs:
             arm_client_id = file("vault-azure/creds.json").parse_json().data.client_id
             arm_client_secret = file("vault-azure/creds.json").parse_json().data.client_secret
 
-  - name: tests
+  - name: terratest
     plan:
       - get: terraform-module-source
       - get: keyval
@@ -91,7 +91,8 @@ jobs:
           image_resource:
             type: registry-image
             source:
-              repository: alpine
+              repository: registry.swipsolution.fr:5000/docker-terratest
+              tag: latest
           params:
             ARM_TENANT_ID: ((.:creds.arm_tenant_id))
             ARM_SUBSCRIPTION_ID: ((.:creds.arm_subscription_id))
@@ -102,7 +103,9 @@ jobs:
             args:
             - -cx
             - |
-              env
+              cd ./terraform-module-source
+              go test -v ./terratest/default_test.go -timeout 60m
+              
 
   - name: publish-and-release
     plan:
