@@ -11,5 +11,4 @@ module "resource_group" {
     Owner           = "iac"
     Terratest       = "true"
   }
-
 }

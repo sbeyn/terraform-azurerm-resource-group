@@ -4,19 +4,18 @@ Terraform module that can be used to create an Azure Resource Group.
 ## Usage
 See `examples` folders for usage of this module.
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12 |
-| azurerm | >= 2.0.0 |
+| terraform | 1.5.3 |
+| azurerm | 3.66.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| azurerm | >= 2.0.0 |
+| azurerm | 3.66.0 |
 
 ## Inputs
 
@@ -34,12 +33,3 @@ See `examples` folders for usage of this module.
 | id | Resource ID of the provisioned resource group. |
 | location | Location of the provisioned resource group. |
 | name | Name of the provisioned resource group. |
-
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-## Inspec
-This module ships with an inspec profile. You can rely on this profile to test this module.
-
-### Attributes
-
-See inspec.yml

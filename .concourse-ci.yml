@@ -155,7 +155,6 @@ jobs:
               cd ./terraform-module-source
               release next-version --bump-patch > VERSION
               release changelog
-              echo "module-$(date +%s)" > .release-name
       - task: archive
         config:
           inputs:
@@ -183,7 +182,7 @@ jobs:
           version_file: terraform-module-source/VERSION
       - put: terraform-module-release
         params:
-          name: terraform-module-source/.release-name
+          name: terraform-module-source/VERSION
           tag: terraform-module-source/VERSION
           commitish: terraform-module-source/.git/refs/heads/master
           body: terraform-module-source/CHANGELOG.md
